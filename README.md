@@ -6,7 +6,6 @@ A light bak.js application for Tweetycs project
 # Create config file
 mv config/default.js config/local.js
 
-
 # Create .env file
 mv .env.example .env
 
