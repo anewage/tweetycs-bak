@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec yarn start",
+    "dev": "bak dev",
     "start": "bak start"
   },
   "dependencies": {
     "@bakjs/mongo": "^4.5.3",
     "axios": "latest",
-    "bak": "^4.7.6"
+    "bak": "^4.7.6",
+    "config": "^3.1.0"
   },
   "devDependencies": {
     "nodemon": "latest"
