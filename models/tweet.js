@@ -9,6 +9,8 @@ class Tweet extends Model {
             id: String,
             id_str: String,
             text: String,
+            topics: Object, // The same old $channels Attribute: https://github.com/topheman/twitter-stream-channels#faq
+            keywords: Array, // The same old $keywords Attribute: https://github.com/topheman/twitter-stream-channels#faq
             analysis: Array,
             labels: Array,
             cause_factors: Object,
