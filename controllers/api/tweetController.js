@@ -114,12 +114,15 @@ export default class TweetsController extends Controller {
                         },
                         'count': {
                             '$sum': 1
-                        }
+                        },
+                        'labels': {
+                            '$first': '$labels'
+                        },
                     }
                 }, {
                     '$group': {
                         '_id': '$_id.bucket',
-                        'details': {
+                        'items': {
                             '$push': '$$ROOT'
                         }
                     }
@@ -154,12 +157,15 @@ export default class TweetsController extends Controller {
                         },
                         'count': {
                             '$sum': 1
-                        }
+                        },
+                        'labels': {
+                            '$first': '$labels'
+                        },
                     }
                 }, {
                     '$group': {
                         '_id': '$_id.bucket',
-                        'details': {
+                        'items': {
                             '$push': '$$ROOT'
                         }
                     }
