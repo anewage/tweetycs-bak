@@ -9,15 +9,75 @@ export default class TweetsController extends Controller {
      */
     init () {
         this.post('/tweet/save', this.saveTweet)
-        this.get('/aggregate', this.getTweets)
+        this.get('/aggregate/users', this.getAggregateUsers)
+        this.get('/aggregate/topics', this.getTweets)
     }
 
     async saveTweet(request, h) {
         try {
             let tweet = new Tweet(request.payload.tweet);
+            tweet['arrived_at'] = new Date().getUTCMilliseconds()
             await tweet.save()
             console.log('DONE')
             return 'OK'
+        } catch (e) {
+            Boom.badRequest()
+        }
+    }
+
+    async getAggregateUsers(request, h) {
+        try {
+            let user_groups = await Tweet.aggregate([
+                {
+                    '$sort': {
+                        'arrived_at': 1
+                    }
+                }, {
+                    '$limit': 100
+                }, {
+                    '$unwind': {
+                        'path': '$analysis',
+                        'includeArrayIndex': 'unwinded_analysis_index',
+                        'preserveNullAndEmptyArrays': true
+                    }
+                }, {
+                    '$group': {
+                        '_id': {
+                            'bucket': '$analysis.id',
+                            'user': '$user.screen_name'
+                        },
+                        'analysis': {
+                            '$first': '$analysis'
+                        },
+                        'avg_sentiment': {
+                            '$avg': '$analysis.result'
+                        },
+                        'user': {
+                            '$first': '$user'
+                        },
+                        'tweets': {
+                            '$push': {
+                                'id': '$id',
+                                'created_at': '$created_at',
+                                'text': '$text',
+                                'retweet_count': '$retweet_count',
+                                'favorite_count': '$favorite_count',
+                                'possibly_sensitive': '$possibly_sensitive',
+                                'analysis': '$analysis'
+                            }
+                        }
+                    }
+                }, {
+                    '$group': {
+                        '_id': '$_id.bucket',
+                        'items': {
+                            '$push': '$$ROOT'
+                        }
+                    }
+                }
+            ])
+            console.log('YESSS!!!')
+            return {user_groups: user_groups}
         } catch (e) {
             Boom.badRequest()
         }
