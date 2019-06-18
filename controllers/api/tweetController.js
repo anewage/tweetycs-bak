@@ -18,7 +18,6 @@ export default class TweetsController extends Controller {
             let tweet = new Tweet(request.payload.tweet);
             tweet['arrived_at'] = new Date().getUTCMilliseconds()
             await tweet.save()
-            console.log('DONE')
             return 'OK'
         } catch (e) {
             Boom.badRequest()
@@ -76,7 +75,6 @@ export default class TweetsController extends Controller {
                     }
                 }
             ])
-            console.log('YESSS!!!')
             return {user_groups: user_groups}
         } catch (e) {
             Boom.badRequest()
