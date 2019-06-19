@@ -10,7 +10,8 @@ export default class TweetsController extends Controller {
     init () {
         this.post('/tweet/save', this.saveTweet)
         this.get('/aggregate/users', this.getAggregateUsers)
-        this.get('/aggregate/topics', this.getTweets)
+        this.get('/aggregate/topics', this.getAggregateTopics)
+        this.get('/aggregate/keywords', this.getAggregateKeywords)
     }
 
     async saveTweet(request, h) {
@@ -74,14 +75,14 @@ export default class TweetsController extends Controller {
                         }
                     }
                 }
-            ])
+            ]).allowDiskUse(true)
             return {user_groups: user_groups}
         } catch (e) {
             Boom.badRequest()
         }
     }
 
-    async getTweets(request, h) {
+    async getAggregateTopics(request, h) {
         try {
             let group_topics = await Tweet.aggregate([
                 {
@@ -125,7 +126,7 @@ export default class TweetsController extends Controller {
                         }
                     }
                 }
-            ])
+            ]).allowDiskUse(true)
             let theme_topics = await Tweet.aggregate([
                 {
                     '$project': {
@@ -168,12 +169,107 @@ export default class TweetsController extends Controller {
                         }
                     }
                 }
-            ])
+            ]).allowDiskUse(true)
             return {
                 group_topics: group_topics,
                 theme_topics: theme_topics
             }
         } catch (e) {
+            Boom.badRequest()
+        }
+    }
+
+    async getAggregateKeywords(request, h) {
+        try {
+            const themes = await Tweet.aggregate([
+                {
+                    '$unwind': {
+                        'path': '$labels',
+                        'includeArrayIndex': 'label_index_unwinded',
+                        'preserveNullAndEmptyArrays': true
+                    }
+                }, {
+                    '$unwind': {
+                        'path': '$analysis',
+                        'includeArrayIndex': 'analysis_index_unwinded',
+                        'preserveNullAndEmptyArrays': true
+                    }
+                }, {
+                    '$project': {
+                        'topics': {
+                            '$objectToArray': '$topics'
+                        },
+                        'analysis': 1,
+                        'labels': 1
+                    }
+                }, {
+                    '$unwind': {
+                        'path': '$topics',
+                        'includeArrayIndex': 'topics_index_unwinded',
+                        'preserveNullAndEmptyArrays': true
+                    }
+                }, {
+                    '$group': {
+                        '_id': {
+                            'topic': '$topics.k',
+                            'keywords': '$topics.v',
+                            'theme': '$labels.result.theme',
+                            'analysis': '$analysis.id',
+                            'labeling': '$labels.id',
+                        },
+                        'avgSentiment': {
+                            '$avg': '$analysis.result'
+                        }
+                    }
+                }
+            ]).allowDiskUse(true)
+            const groups = await Tweet.aggregate([
+                {
+                    '$unwind': {
+                        'path': '$labels',
+                        'includeArrayIndex': 'label_index_unwinded',
+                        'preserveNullAndEmptyArrays': true
+                    }
+                }, {
+                    '$unwind': {
+                        'path': '$analysis',
+                        'includeArrayIndex': 'analysis_index_unwinded',
+                        'preserveNullAndEmptyArrays': true
+                    }
+                }, {
+                    '$project': {
+                        'topics': {
+                            '$objectToArray': '$topics'
+                        },
+                        'analysis': 1,
+                        'labels': 1,
+                    }
+                }, {
+                    '$unwind': {
+                        'path': '$topics',
+                        'includeArrayIndex': 'topics_index_unwinded',
+                        'preserveNullAndEmptyArrays': true
+                    }
+                }, {
+                    '$group': {
+                        '_id': {
+                            'topic': '$topics.k',
+                            'keywords': '$topics.v',
+                            'group': '$labels.result.group',
+                            'analysis': '$analysis.id',
+                            'labeling': '$labels.id',
+                        },
+                        'avgSentiment': {
+                            '$avg': '$analysis.result'
+                        }
+                    }
+                }
+            ]).allowDiskUse(true)
+            return {
+                themes: themes,
+                groups: groups
+            }
+        } catch(e) {
             Boom.badRequest()
         }
     }
