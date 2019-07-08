@@ -8,7 +8,7 @@ ENV HOST=0.0.0.0
 
 WORKDIR /usr/src/app
 EXPOSE 3000
-COPY package.json /usr/src/app/
+COPY package.json yarn.lock /usr/src/app/
 RUN yarn install --frozen-lockfile --non-interactive
 
 COPY . /usr/src/app
