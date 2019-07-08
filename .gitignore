@@ -11,5 +11,4 @@ node_modules
 config/local.js
 
 # Yarn
-yarn.lock
 *.log
