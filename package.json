@@ -10,7 +10,7 @@
     "@bakjs/mongo": "^4.5.3",
     "axios": "latest",
     "bak": "^4.7.6",
-    "config": "^3.1.0"
+    "dotenv": "^8.0.0"
   },
   "devDependencies": {
     "nodemon": "latest"

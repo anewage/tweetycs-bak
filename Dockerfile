@@ -1,6 +1,6 @@
 FROM node:latest
 
-# MAINTAINER: Amir Haghighati <haghighati.ami@gmail.com>
+MAINTAINER Amir Haghighati <haghighati.ami@gmail.com>
 
 ENV NODE_ENV=production
 ENV PORT=3000
