@@ -9,17 +9,31 @@ export default class TweetsController extends Controller {
      */
     init () {
         this.post('/tweet/save', this.saveTweet)
+        this.get('/tweets/', this.getTweetsWindow)
         this.get('/aggregate/users', this.getAggregateUsers)
         this.get('/aggregate/topics', this.getAggregateTopics)
         this.get('/aggregate/keywords', this.getAggregateKeywords)
+        // Tweet.watch().
+        // on('change', function(doc) { console.log(doc); }).
+        // on('end', function() { console.log('Done!'); });
     }
 
     async saveTweet(request, h) {
         try {
             let tweet = new Tweet(request.payload.tweet);
-            tweet['arrived_at'] = new Date().getUTCMilliseconds()
+            tweet['arrived_at'] = new Date().getTime()
             await tweet.save()
             return 'OK'
+        } catch (e) {
+            Boom.badRequest()
+        }
+    }
+
+    async getTweetsWindow(request, h) {
+        try {
+            let from = new Date(+request.query.from)
+            let to = new Date(+request.query.to || '')
+            return await Tweet.find({'created_at': {'$gte': from, '$lt': to}})
         } catch (e) {
             Boom.badRequest()
         }

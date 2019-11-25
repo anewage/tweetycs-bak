@@ -7,10 +7,11 @@ class Tweet extends Model {
     static get $schema () {
         return {
             id: String,
-            created_at: String,
+            created_at: Date,
             arrived_at: String,
             id_str: String,
             text: String,
+            original_text: String,
             topics: Object, // The same old $channels Attribute: https://github.com/topheman/twitter-stream-channels#faq
             keywords: Array, // The same old $keywords Attribute: https://github.com/topheman/twitter-stream-channels#faq
             analysis: Array,
