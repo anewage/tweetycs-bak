@@ -35,6 +35,11 @@ export default class TweetsController extends Controller {
             let from = new Date(+request.query.from)
             let to = new Date(+request.query.to || '')
             let tweets = Tweet.find({'created_at': {'$gte': from, '$lt': to}})
+            console.log(from, to)
+            // fs.writeFile('tweets.json', JSON.stringify(tweets), function (err) {
+            //     if (err) throw err;
+            //     console.log('Saved!');
+            // });
             return await tweets
         } catch (e) {
             Boom.badRequest()
@@ -94,11 +99,7 @@ export default class TweetsController extends Controller {
                     }
                 }
             ]).allowDiskUse(true)
-            // const user_groups = await fs.readFile('user_groups.json', (err, data) => {
-            //     if (err) throw err;
-            //     return JSON.parse(data);
-            // });
-            // fs.writeFile('user_groups.json', JSON.stringify(user_groups), function (err) {
+            // fs.writeFile('agusers.json', JSON.stringify({user_grous: user_groups}), function (err) {
             //     if (err) throw err;
             //     console.log('Saved!');
             // });
@@ -196,21 +197,9 @@ export default class TweetsController extends Controller {
                     }
                 }
             ]).allowDiskUse(true)
-            // fs.writeFile('group_topics.json', JSON.stringify(group_topics), function (err) {
+            // fs.writeFile('agtopics.json', JSON.stringify({group_topics: group_topics, theme_topics: theme_topics}), function (err) {
             //     if (err) throw err;
             //     console.log('Saved!');
-            // });
-            // fs.writeFile('theme_topics.json', JSON.stringify(theme_topics), function (err) {
-            //     if (err) throw err;
-            //     console.log('Saved!');
-            // });
-            // const group_topics = await fs.readFile('group_topics.json', (err, data) => {
-            //     if (err) throw err;
-            //     return JSON.parse(data);
-            // });
-            // const theme_topics = await fs.readFile('theme_topics.json', (err, data) => {
-            //     if (err) throw err;
-            //     return JSON.parse(data);
             // });
             return {
                 group_topics: group_topics,
@@ -307,21 +296,9 @@ export default class TweetsController extends Controller {
                     }
                 }
             ]).allowDiskUse(true)
-            // fs.writeFile('themes.json', JSON.stringify(themes), function (err) {
-            //             //     if (err) throw err;
-            //             //     console.log('Saved!');
-            //             // });
-            //             // fs.writeFile('groups.json', JSON.stringify(groups), function (err) {
-            //             //     if (err) throw err;
-            //             //     console.log('Saved!');
-            //             // });
-            // const themes = await fs.readFile('themes.json', (err, data) => {
+            // fs.writeFile('agkeywords.json', JSON.stringify({themes: themes, groups: groups}), function (err) {
             //     if (err) throw err;
-            //     return JSON.parse(data);
-            // });
-            // const groups = await fs.readFile('groups.json', (err, data) => {
-            //     if (err) throw err;
-            //     return JSON.parse(data);
+            //     console.log('Saved!');
             // });
             return {
                 themes: themes,
