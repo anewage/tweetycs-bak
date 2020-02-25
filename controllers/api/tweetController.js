@@ -1,6 +1,7 @@
 const { Controller } = require('bak')
 const Boom = require('boom')
 const { Tweet } = require('../../models')
+// const fs = require('fs')
 
 export default class TweetsController extends Controller {
 
@@ -33,7 +34,8 @@ export default class TweetsController extends Controller {
         try {
             let from = new Date(+request.query.from)
             let to = new Date(+request.query.to || '')
-            return await Tweet.find({'created_at': {'$gte': from, '$lt': to}})
+            let tweets = Tweet.find({'created_at': {'$gte': from, '$lt': to}})
+            return await tweets
         } catch (e) {
             Boom.badRequest()
         }
@@ -74,10 +76,12 @@ export default class TweetsController extends Controller {
                                 'id': '$id',
                                 'created_at': '$created_at',
                                 'text': '$text',
+                                'user': '$user',
                                 'retweet_count': '$retweet_count',
                                 'favorite_count': '$favorite_count',
                                 'possibly_sensitive': '$possibly_sensitive',
-                                'analysis': '$analysis'
+                                'analysis': '$analysis',
+                                'labels': '$labels'
                             }
                         }
                     }
@@ -90,6 +94,14 @@ export default class TweetsController extends Controller {
                     }
                 }
             ]).allowDiskUse(true)
+            // const user_groups = await fs.readFile('user_groups.json', (err, data) => {
+            //     if (err) throw err;
+            //     return JSON.parse(data);
+            // });
+            // fs.writeFile('user_groups.json', JSON.stringify(user_groups), function (err) {
+            //     if (err) throw err;
+            //     console.log('Saved!');
+            // });
             return {user_groups: user_groups}
         } catch (e) {
             Boom.badRequest()
@@ -184,6 +196,22 @@ export default class TweetsController extends Controller {
                     }
                 }
             ]).allowDiskUse(true)
+            // fs.writeFile('group_topics.json', JSON.stringify(group_topics), function (err) {
+            //     if (err) throw err;
+            //     console.log('Saved!');
+            // });
+            // fs.writeFile('theme_topics.json', JSON.stringify(theme_topics), function (err) {
+            //     if (err) throw err;
+            //     console.log('Saved!');
+            // });
+            // const group_topics = await fs.readFile('group_topics.json', (err, data) => {
+            //     if (err) throw err;
+            //     return JSON.parse(data);
+            // });
+            // const theme_topics = await fs.readFile('theme_topics.json', (err, data) => {
+            //     if (err) throw err;
+            //     return JSON.parse(data);
+            // });
             return {
                 group_topics: group_topics,
                 theme_topics: theme_topics
@@ -279,6 +307,22 @@ export default class TweetsController extends Controller {
                     }
                 }
             ]).allowDiskUse(true)
+            // fs.writeFile('themes.json', JSON.stringify(themes), function (err) {
+            //             //     if (err) throw err;
+            //             //     console.log('Saved!');
+            //             // });
+            //             // fs.writeFile('groups.json', JSON.stringify(groups), function (err) {
+            //             //     if (err) throw err;
+            //             //     console.log('Saved!');
+            //             // });
+            // const themes = await fs.readFile('themes.json', (err, data) => {
+            //     if (err) throw err;
+            //     return JSON.parse(data);
+            // });
+            // const groups = await fs.readFile('groups.json', (err, data) => {
+            //     if (err) throw err;
+            //     return JSON.parse(data);
+            // });
             return {
                 themes: themes,
                 groups: groups
